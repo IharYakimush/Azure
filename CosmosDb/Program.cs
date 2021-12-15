@@ -37,6 +37,7 @@ namespace CosmosDb
             //NB > Keep these values in a safe & secure location. Together they provide Administrative access to your Cosmos account
             using (CosmosClient client = new CosmosClient(endpoint, authKey,new CosmosClientOptions() { ConnectionMode = ConnectionMode.Direct,AllowBulkExecution = true}))
             {
+                //new CosmosClient("qwe", new DefaultAzureCredential());
                 DatabaseResponse database = await client.CreateDatabaseIfNotExistsAsync(databaseId);
                 //await DataSeed2.Run(database);
                 //await DataSeed.Run(database);
