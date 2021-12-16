@@ -5,9 +5,16 @@ VisualStudioVersion = 17.0.31919.166
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Community.Azure.Cosmos", "Community.Azure.Cosmos\Community.Azure.Cosmos.csproj", "{61287B4C-55E6-4EB0-8CC8-DCA62C3EEEF3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Benchmark", "Benchmark\Benchmark.csproj", "{345EEC74-B508-4FE5-AE3A-3A1073DDA61E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Benchmark", "Benchmark\Benchmark.csproj", "{345EEC74-B508-4FE5-AE3A-3A1073DDA61E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Community.Azure.Cosmos.IntegrationTests", "Community.Azure.Cosmos.IntegrationTests\Community.Azure.Cosmos.IntegrationTests.csproj", "{3E52A207-1153-433F-B0BE-90B8C5EB48DC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Community.Azure.Cosmos.IntegrationTests", "Community.Azure.Cosmos.IntegrationTests\Community.Azure.Cosmos.IntegrationTests.csproj", "{3E52A207-1153-433F-B0BE-90B8C5EB48DC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{DC31733B-5541-45CF-B569-5972625BE3AC}"
+	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

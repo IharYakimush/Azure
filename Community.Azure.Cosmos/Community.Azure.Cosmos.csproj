@@ -1,17 +1,21 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+	<Nullable>enable</Nullable>
+	<LangVersion>10.0</LangVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageProjectUrl>https://github.com/IharYakimush/Azure</PackageProjectUrl>
-    <PackageTags>azure cosmos cosmosdb</PackageTags>
+    <PackageTags>azure cosmos cosmosdb dependency injection</PackageTags>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+	<PackageLicenseExpression>MIT</PackageLicenseExpression>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <AnalysisLevel>6.0</AnalysisLevel>
-    <Description>dependency injection and System.Text.Json serializer for Azure Cosmos BD</Description>
-  </PropertyGroup>
+    <Description>Azure CosmosDb dependency injection and System.Text.Json serializer</Description>
+    <ProduceReferenceAssembly>True</ProduceReferenceAssembly>
+    <Copyright>IharYakimush</Copyright>
+  </PropertyGroup>	
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.23.0" />

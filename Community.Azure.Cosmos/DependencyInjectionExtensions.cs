@@ -24,9 +24,7 @@ namespace Community.Azure.Cosmos
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            CosmosClientCollection collection = services.SingleOrDefault(d => d.ServiceType == typeof(CosmosClientCollection) && d.ImplementationInstance as CosmosClientCollection != null)?.ImplementationInstance as CosmosClientCollection;
-
-            if (collection is null)
+            if (services.SingleOrDefault(d => d.ServiceType == typeof(CosmosClientCollection) && d.ImplementationInstance as CosmosClientCollection != null)?.ImplementationInstance is not CosmosClientCollection collection)
             {
                 collection = new CosmosClientCollection();
                 services.AddSingleton(collection);
@@ -41,28 +39,21 @@ namespace Community.Azure.Cosmos
         }
 
         public static IServiceCollection AddCosmosDatabase<TDatabase>(
-            this IServiceCollection services, 
-            string databaseId, 
+            this IServiceCollection services,
+            bool createIfNotExists,
+            string databaseId,
+            ThroughputProperties? throughput = null,
             string clientId = CosmosClientCollection.DefaultId)
         {
-            return services.AddCosmosDatabase<TDatabase>(databaseId, false, null, clientId);
+            return services.AddCosmosDatabase<TDatabase>(createIfNotExists, (sp) => databaseId, (sp) => throughput, clientId);
         }
-
-        public static IServiceCollection AddCosmosDatabaseCreateIfNotExists<TDatabase>(
-            this IServiceCollection services, 
-            string databaseId, 
-            ThroughputProperties throughput = null, 
+        
+        public static IServiceCollection AddCosmosDatabase<TDatabase>(
+            this IServiceCollection services,             
+            bool createIfNotExists,
+            Func<IServiceProvider, string> databaseId,
+            Func<IServiceProvider, ThroughputProperties?>? throughputProperties = null,
             string clientId = CosmosClientCollection.DefaultId)
-        {
-            return services.AddCosmosDatabase<TDatabase>(databaseId, true, throughput, clientId);
-        }
-
-        private static IServiceCollection AddCosmosDatabase<TDatabase>(
-            this IServiceCollection services, 
-            string databaseId, 
-            bool createIfNotExists, 
-            ThroughputProperties throughput, 
-            string clientId)
         {
             if (services is null)
             {
@@ -74,11 +65,9 @@ namespace Community.Azure.Cosmos
                 throw new ArgumentNullException(nameof(databaseId));
             }
 
-            CosmosClientCollection collection = services.SingleOrDefault(d => d.ServiceType == typeof(CosmosClientCollection) && d.ImplementationInstance as CosmosClientCollection != null)?.ImplementationInstance as CosmosClientCollection;
-
-            if (collection != null && collection.Items.TryGetValue(clientId, out var client))
+            if (services.SingleOrDefault(d => d.ServiceType == typeof(CosmosClientCollection) && d.ImplementationInstance as CosmosClientCollection != null)?.ImplementationInstance is CosmosClientCollection collection && collection.Items.TryGetValue(clientId, out var client))
             {
-                services.TryAddSingleton(new CosmosDatabase<TDatabase>(client, databaseId, throughput, createIfNotExists));
+                services.TryAddSingleton(sp => new CosmosDatabase<TDatabase>(client, databaseId(sp), throughputProperties?.Invoke(sp), createIfNotExists));
             }
             else
             {
@@ -88,43 +77,23 @@ namespace Community.Azure.Cosmos
             return services;
         }
 
-        public static IServiceCollection AddCosmosContainer<TDatabase, TContainer>(this IServiceCollection services, string containerId)
+        public static IServiceCollection AddCosmosContainer<TDatabase, TContainer>(
+            this IServiceCollection services,
+            string containerId)
         {
-            return services.AddCosmosContainer<TDatabase, TContainer>(false, containerId, null, null, null);
+            return services.AddCosmosContainer<TDatabase, TContainer>(false, sp => new ContainerProperties(containerId, "/any"));
         }
 
-        public static IServiceCollection AddCosmosContainerCreateIfNotExists<TDatabase, TContainer>(
+        public static IServiceCollection AddCosmosContainer<TDatabase, TContainer>(
             this IServiceCollection services, 
-            string containerId, 
-            string partitionKey, 
-            Action<ContainerBuilder> containerSetup = null, 
-            ThroughputProperties throughput = null)
-        {
-            return services.AddCosmosContainer<TDatabase, TContainer>(true, containerId, partitionKey, containerSetup, throughput);
-        }
-
-        private static IServiceCollection AddCosmosContainer<TDatabase, TContainer>(
-            this IServiceCollection services, 
-            bool allowCreate, 
-            string containerId, 
-            string partitionKey, 
-            Action<ContainerBuilder> containerSetup, 
-            ThroughputProperties throughput)
-        {
+            bool createIfNotExists, 
+            Func<IServiceProvider, ContainerProperties> containerProperties,
+            Func<IServiceProvider, ThroughputProperties>? throughputProperties = null)
+        {            
             if (services is null)
             {
                 throw new ArgumentNullException(nameof(services));
-            }
-
-            if (containerId is null)
-            {
-                throw new ArgumentNullException(nameof(containerId));
-            }
-
-            if (allowCreate && partitionKey is null)
-            {
-                throw new ArgumentNullException(nameof(partitionKey));
-            }
+            }            
 
             if (!services.Any(d => d.ServiceType == typeof(CosmosDatabase<TDatabase>)))
             {
@@ -133,12 +102,10 @@ namespace Community.Azure.Cosmos
            
             services.TryAddSingleton(sp =>
             {
-                return new CosmosContainer<TContainer>(sp.GetRequiredService<CosmosDatabase<TDatabase>>(), allowCreate, containerId, partitionKey, containerSetup, throughput);
+                return new CosmosContainer<TContainer>(sp.GetRequiredService<CosmosDatabase<TDatabase>>(), createIfNotExists, containerProperties(sp), throughputProperties?.Invoke(sp));
             });
 
             return services;
-        }
-
-        
+        }        
     }
 }

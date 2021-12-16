@@ -4,10 +4,9 @@ namespace Community.Azure.Cosmos
 {
     public class CosmosDatabase<TDatabase> : ICosmosDatabase
     {
-        private Lazy<Database> database;
+        private readonly Lazy<Database> database;
 
-        private readonly Func<Database> dbFactory;
-        internal CosmosDatabase(Lazy<CosmosClient> cosmosClient, string databaseId, ThroughputProperties throughput, bool allowCreate)
+        internal CosmosDatabase(Lazy<CosmosClient> cosmosClient, string databaseId, ThroughputProperties? throughput, bool allowCreate)
         {
             if (cosmosClient is null)
             {
@@ -18,28 +17,25 @@ namespace Community.Azure.Cosmos
             {
                 throw new ArgumentNullException(nameof(databaseId));
             }
-            
+
+            Func<Database> dbFactory;
+
             if (!allowCreate)
             {
-                this.dbFactory = () => cosmosClient.Value.GetDatabase(databaseId);
+                dbFactory = () => cosmosClient.Value.GetDatabase(databaseId);
             }
             else if (throughput is null)
             {
-                this.dbFactory = () => cosmosClient.Value.CreateDatabaseIfNotExistsAsync(databaseId).Result;
+                dbFactory = () => cosmosClient.Value.CreateDatabaseIfNotExistsAsync(databaseId).Result;
             }
             else
             {
-                this.dbFactory = () => cosmosClient.Value.CreateDatabaseIfNotExistsAsync(databaseId, throughput).Result;
+                dbFactory = () => cosmosClient.Value.CreateDatabaseIfNotExistsAsync(databaseId, throughput).Result;
             }
 
-            this.Reload();
+            this.database = new Lazy<Database>(dbFactory, LazyThreadSafetyMode.ExecutionAndPublication);
         }
 
-        public Database Value => this.database.Value;
-
-        private void Reload()
-        {
-            this.database = new Lazy<Database>(dbFactory, LazyThreadSafetyMode.ExecutionAndPublication);
-        }        
+        public Database Value => this.database.Value;       
     }
 }

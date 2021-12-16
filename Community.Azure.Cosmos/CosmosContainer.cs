@@ -5,55 +5,53 @@ namespace Community.Azure.Cosmos
 {
     public class CosmosContainer<TContainer> 
     {
-        private readonly Func<Container> containerFactory;
-        private Lazy<Container> container;
-        internal CosmosContainer(ICosmosDatabase cosmosDatabase, bool allowCreate, string id, string partitionKey, Action<ContainerBuilder> containerSetup, ThroughputProperties throughput)
+        private readonly Lazy<Container> container;
+        internal CosmosContainer(ICosmosDatabase cosmosDatabase, bool allowCreate, ContainerProperties containerProperties, ThroughputProperties? throughput)
         {
             if (cosmosDatabase is null)
             {
                 throw new ArgumentNullException(nameof(cosmosDatabase));
             }
 
-            if (id is null)
+            if (containerProperties is null)
             {
-                throw new ArgumentNullException(nameof(id));
+                throw new ArgumentNullException(nameof(containerProperties));
             }
+
+            if (containerProperties.Id is null)
+            {
+                throw new ArgumentNullException(nameof(containerProperties.Id));
+            }
+
+            Func<Container> containerFactory;
 
             if (!allowCreate)
             {
-                this.containerFactory = () => cosmosDatabase.Value.GetContainer(id);
+                containerFactory = () => cosmosDatabase.Value.GetContainer(containerProperties.Id);
             }
             else 
             {
-                if (partitionKey is null)
+                if (containerProperties.PartitionKeyPath is null)
                 {
-                    throw new ArgumentNullException(nameof(partitionKey));
+                    throw new ArgumentNullException(nameof(containerProperties.PartitionKeyPath));
                 }
 
-                this.containerFactory = () =>
+                containerFactory = () =>
                 {
-                    ContainerBuilder builder = new ContainerBuilder(cosmosDatabase.Value, id, partitionKey);
-                    containerSetup?.Invoke(builder);
-
                     if (throughput == null)
                     {
-                        return builder.CreateIfNotExistsAsync().Result;
+                        return cosmosDatabase.Value.CreateContainerIfNotExistsAsync(containerProperties).Result;
                     }
                     else
                     {
-                        return builder.CreateIfNotExistsAsync(throughput).Result;
+                        return cosmosDatabase.Value.CreateContainerIfNotExistsAsync(containerProperties, throughput).Result;
                     }
                 };
-            }            
+            }
 
-            this.Reload();
+            container = new Lazy<Container>(containerFactory, LazyThreadSafetyMode.ExecutionAndPublication);
         }
 
-        public Container Value => this.container.Value;
-
-        private void Reload()
-        {
-            this.container = new Lazy<Container>(this.containerFactory, LazyThreadSafetyMode.ExecutionAndPublication);
-        }
+        public Container Value => container.Value;        
     }
 }
