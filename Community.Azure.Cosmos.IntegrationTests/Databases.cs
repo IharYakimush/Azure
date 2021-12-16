@@ -2,6 +2,7 @@
 using Microsoft.Azure.Cosmos.Fluent;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,12 @@ namespace Community.Azure.Cosmos.IntegrationTests
         {
             ServiceCollection services = new();
 
-            services.AddCosmosClient(new CosmosClientBuilder(Conf.Value.GetConnectionString("CosmosDb")));
+            ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
+            configurationBuilder.AddUserSecrets(typeof(Databases).Assembly);
+
+            services.TryAddSingleton<IConfiguration>(configurationBuilder.Build());
+
+            services.AddCosmosClient(sp=> new CosmosClientBuilder(sp.GetRequiredService<IConfiguration>().GetConnectionString("CosmosDb")));
 
             services.AddCosmosDatabase<Db1>(true, "azt1");
             services.AddCosmosDatabase<Db2>(false, "azt2");

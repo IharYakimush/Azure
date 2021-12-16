@@ -12,7 +12,8 @@ namespace Community.Azure.Cosmos
 {
     public static class DependencyInjectionExtensions
     {
-        public static IServiceCollection AddCosmosClient(this IServiceCollection services, CosmosClientBuilder builder, string clientId = CosmosClientCollection.DefaultId)
+        private static readonly HashSet<string> RegisteredClients = new HashSet<string>();
+        public static IServiceCollection AddCosmosClient(this IServiceCollection services, Func<IServiceProvider, CosmosClientBuilder> builder, string clientId = CosmosClientFactory.DefaultCosmosClientId)
         {
             if (services is null)
             {
@@ -24,16 +25,16 @@ namespace Community.Azure.Cosmos
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            if (services.SingleOrDefault(d => d.ServiceType == typeof(CosmosClientCollection) && d.ImplementationInstance as CosmosClientCollection != null)?.ImplementationInstance is not CosmosClientCollection collection)
+            if (RegisteredClients.Contains(clientId))
             {
-                collection = new CosmosClientCollection();
-                services.AddSingleton(collection);
+                throw new InvalidOperationException($"CosmosClient with id {clientId} already registered");
             }
 
-            if (!collection.Items.ContainsKey(clientId))
-            {
-                collection.Items.Add(clientId, new Lazy<CosmosClient>(() => builder.Build(), LazyThreadSafetyMode.ExecutionAndPublication));
-            }
+            RegisteredClients.Add(clientId);
+
+            services.TryAddSingleton(sp => new CosmosClientFactory(sp));
+
+            services.AddSingleton(sp => new CosmosClientWrapper(new Lazy<CosmosClient>(() => builder(sp).Build(), LazyThreadSafetyMode.ExecutionAndPublication), clientId));
             
             return services;
         }
@@ -43,7 +44,7 @@ namespace Community.Azure.Cosmos
             bool createIfNotExists,
             string databaseId,
             ThroughputProperties? throughput = null,
-            string clientId = CosmosClientCollection.DefaultId)
+            string clientId = CosmosClientFactory.DefaultCosmosClientId)
         {
             return services.AddCosmosDatabase<TDatabase>(createIfNotExists, (sp) => databaseId, (sp) => throughput, clientId);
         }
@@ -53,7 +54,7 @@ namespace Community.Azure.Cosmos
             bool createIfNotExists,
             Func<IServiceProvider, string> databaseId,
             Func<IServiceProvider, ThroughputProperties?>? throughputProperties = null,
-            string clientId = CosmosClientCollection.DefaultId)
+            string clientId = CosmosClientFactory.DefaultCosmosClientId)
         {
             if (services is null)
             {
@@ -65,9 +66,13 @@ namespace Community.Azure.Cosmos
                 throw new ArgumentNullException(nameof(databaseId));
             }
 
-            if (services.SingleOrDefault(d => d.ServiceType == typeof(CosmosClientCollection) && d.ImplementationInstance as CosmosClientCollection != null)?.ImplementationInstance is CosmosClientCollection collection && collection.Items.TryGetValue(clientId, out var client))
+            if (RegisteredClients.Contains(clientId))
             {
-                services.TryAddSingleton(sp => new CosmosDatabase<TDatabase>(client, databaseId(sp), throughputProperties?.Invoke(sp), createIfNotExists));
+                services.TryAddSingleton(sp =>
+                {
+                    Lazy<CosmosClient> client = sp.GetRequiredService<CosmosClientFactory>().GetCosmosClientLazy(clientId);
+                    return new CosmosDatabase<TDatabase>(client, databaseId(sp), throughputProperties?.Invoke(sp), createIfNotExists);
+                });
             }
             else
             {
