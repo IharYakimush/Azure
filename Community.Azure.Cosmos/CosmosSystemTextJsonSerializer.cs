@@ -41,7 +41,7 @@ namespace Community.Azure.Cosmos
 
         public override Stream ToStream<T>(T input)
         {
-            MemoryStream streamPayload = new MemoryStream();
+            MemoryStream streamPayload = new();
             this.systemTextJsonSerializer.Serialize(streamPayload, input, typeof(T), default);
             streamPayload.Position = 0;
             return streamPayload;
