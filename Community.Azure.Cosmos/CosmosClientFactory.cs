@@ -24,6 +24,11 @@ namespace Community.Azure.Cosmos
 
         public Lazy<CosmosClient> GetCosmosClientLazy(string id = DefaultCosmosClientId)
         {
+            if (id is null)
+            {
+                throw new ArgumentNullException(nameof(id));
+            }
+
             foreach (CosmosClientWrapper? item in this.serviceProvider.GetServices(typeof(CosmosClientWrapper)))
             {
                 if (item?.Id == id)

@@ -27,20 +27,32 @@ namespace Community.Azure.Cosmos.IntegrationTests
         {
             ServiceCollection services = new();
 
+            AddDatabases(services);
+            
+            Sp = services.BuildServiceProvider();
+        }
+
+        internal static void AddDatabases(IServiceCollection services)
+        {
             ConfigurationBuilder configurationBuilder = new ConfigurationBuilder();
             configurationBuilder.AddUserSecrets(typeof(Databases).Assembly);
 
             services.TryAddSingleton<IConfiguration>(configurationBuilder.Build());
 
-            services.AddCosmosClient(sp=> new CosmosClientBuilder(sp.GetRequiredService<IConfiguration>().GetConnectionString("CosmosDb")));
+            services.AddCosmosClient(sp => new CosmosClientBuilder(sp.GetRequiredService<IConfiguration>().GetConnectionString("CosmosDb"))
+            //.WithSerializerOptions(new CosmosSerializationOptions() { PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase })
+            .WithCustomSerializer(
+                new CosmosSystemTextJsonSerializer(
+                    new System.Text.Json.JsonSerializerOptions() 
+                    {
+                        PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.CamelCase,
+                        PropertyNameCaseInsensitive = true
+                    })));
 
             services.AddCosmosDatabase<Db1>(true, "azt1");
             services.AddCosmosDatabase<Db2>(false, "azt2");
             services.AddCosmosDatabase<Db3>(true, "dam");
             services.AddCosmosDatabase<Db4>(false, "dam");
-
-            //services.AddCosmosContainerCreateIfNotExists<Databases.Dd1, Containers.Cnt1>("test1", "/pk");
-            Sp = services.BuildServiceProvider();
         }
 
         [Fact]

@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LICENSE = LICENSE
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Community.Azure.Cosmos.Tests", "Community.Azure.Cosmos.Tests\Community.Azure.Cosmos.Tests.csproj", "{F73F8C0C-AD45-49F9-B364-D20C30ADE8DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -34,6 +36,10 @@ Global
 		{3E52A207-1153-433F-B0BE-90B8C5EB48DC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3E52A207-1153-433F-B0BE-90B8C5EB48DC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E52A207-1153-433F-B0BE-90B8C5EB48DC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F73F8C0C-AD45-49F9-B364-D20C30ADE8DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F73F8C0C-AD45-49F9-B364-D20C30ADE8DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F73F8C0C-AD45-49F9-B364-D20C30ADE8DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F73F8C0C-AD45-49F9-B364-D20C30ADE8DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

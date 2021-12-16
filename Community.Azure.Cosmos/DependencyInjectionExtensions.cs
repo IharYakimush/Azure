@@ -12,7 +12,7 @@ namespace Community.Azure.Cosmos
 {
     public static class DependencyInjectionExtensions
     {
-        private static readonly HashSet<string> RegisteredClients = new HashSet<string>();
+        private static readonly Dictionary<IServiceCollection, HashSet<string>> RegisteredClients = new();
         public static IServiceCollection AddCosmosClient(this IServiceCollection services, Func<IServiceProvider, CosmosClientBuilder> builder, string clientId = CosmosClientFactory.DefaultCosmosClientId)
         {
             if (services is null)
@@ -25,12 +25,18 @@ namespace Community.Azure.Cosmos
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            if (RegisteredClients.Contains(clientId))
+            if (!RegisteredClients.TryGetValue(services, out var clients))
+            {
+                clients = new HashSet<string>();
+                RegisteredClients.Add(services, clients);
+            }
+
+            if (clients.Contains(clientId))
             {
                 throw new InvalidOperationException($"CosmosClient with id {clientId} already registered");
             }
 
-            RegisteredClients.Add(clientId);
+            clients.Add(clientId);
 
             services.TryAddSingleton(sp => new CosmosClientFactory(sp));
 
@@ -48,9 +54,9 @@ namespace Community.Azure.Cosmos
         {
             return services.AddCosmosDatabase<TDatabase>(createIfNotExists, (sp) => databaseId, (sp) => throughput, clientId);
         }
-        
+
         public static IServiceCollection AddCosmosDatabase<TDatabase>(
-            this IServiceCollection services,             
+            this IServiceCollection services,
             bool createIfNotExists,
             Func<IServiceProvider, string> databaseId,
             Func<IServiceProvider, ThroughputProperties?>? throughputProperties = null,
@@ -66,7 +72,7 @@ namespace Community.Azure.Cosmos
                 throw new ArgumentNullException(nameof(databaseId));
             }
 
-            if (RegisteredClients.Contains(clientId))
+            if (RegisteredClients.TryGetValue(services, out var clients) && clients.Contains(clientId))
             {
                 services.TryAddSingleton(sp =>
                 {
