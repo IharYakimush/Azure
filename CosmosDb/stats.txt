@@ -1,3 +1,0 @@
-		Article Asset 			ArticleWithAssets	AssetWithArticle	AssetsOdArticle
-Create	7.05	6.67*100=667	88.95				8.95-90				6.2
-GetById			2.83			3.06 (wopk)
