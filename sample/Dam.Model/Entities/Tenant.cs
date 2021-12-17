@@ -15,7 +15,7 @@ namespace Dam.Model
 
         public class PropertyPath : Entity.PropertyName
         {
-            public const string Name = "name";
+            public const string Name = "/" + PropertyName.Name;
         }
 
         [JsonConstructor]

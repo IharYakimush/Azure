@@ -24,6 +24,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SampleDam", "SampleDam", "{
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dam.Model", "sample\Dam.Model\Dam.Model.csproj", "{60554C7C-E18D-4967-A0D7-2807E08A2095}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dam.FunctionsHttp", "sample\Dam.FunctionsHttp\Dam.FunctionsHttp.csproj", "{5782117B-B6A8-41F8-B37E-38BE8244EEFF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,10 @@ Global
 		{60554C7C-E18D-4967-A0D7-2807E08A2095}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{60554C7C-E18D-4967-A0D7-2807E08A2095}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{60554C7C-E18D-4967-A0D7-2807E08A2095}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5782117B-B6A8-41F8-B37E-38BE8244EEFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5782117B-B6A8-41F8-B37E-38BE8244EEFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5782117B-B6A8-41F8-B37E-38BE8244EEFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5782117B-B6A8-41F8-B37E-38BE8244EEFF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,6 +66,7 @@ Global
 		{3E52A207-1153-433F-B0BE-90B8C5EB48DC} = {F370FA23-4F5A-4C26-9B64-F931C425A271}
 		{F73F8C0C-AD45-49F9-B364-D20C30ADE8DA} = {F370FA23-4F5A-4C26-9B64-F931C425A271}
 		{60554C7C-E18D-4967-A0D7-2807E08A2095} = {EA64E229-CE28-41E1-B69E-517BF9CB114B}
+		{5782117B-B6A8-41F8-B37E-38BE8244EEFF} = {EA64E229-CE28-41E1-B69E-517BF9CB114B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {46AC04CD-CC51-4D46-94D4-50EDA577842A}

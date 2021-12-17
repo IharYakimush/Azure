@@ -8,7 +8,7 @@ using Microsoft.Azure.Cosmos;
 namespace Dam.Model.CosmosDb
 {
 
-    public static class DependencyInjection
+    public static class CosmosDbServices
     {
         private class DefaultDatabase { }
 
@@ -42,6 +42,9 @@ namespace Dam.Model.CosmosDb
                 indexingPolicy.ClearIndexingPaths();
                 indexingPolicy.IncludeEntityPaths();
                 indexingPolicy.IncludedPaths.Add(new IncludedPath() { Path = $"{Tenant.PropertyPath.Name}/?" });
+                UniqueKey uniqueName = new UniqueKey();
+                uniqueName.Paths.Add(TenantIndexed.PropertyPath.Name);
+                containerProperties.UniqueKeyPolicy.UniqueKeys.Add(uniqueName);
 
                 return containerProperties;
             });
