@@ -46,5 +46,6 @@ namespace Community.Azure.Cosmos
             streamPayload.Position = 0;
             return streamPayload;
         }
+        
     }
 }

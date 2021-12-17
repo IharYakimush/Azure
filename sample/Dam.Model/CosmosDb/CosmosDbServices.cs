@@ -27,7 +27,7 @@ namespace Dam.Model.CosmosDb
 
             services.AddCosmosContainer<DefaultDatabase, Tenant>(true, sp =>
             {
-                ContainerProperties containerProperties = new ContainerProperties("tenant", Entity.PropertyName.Pk);
+                ContainerProperties containerProperties = new ContainerProperties("tenant", Entity.PropertyPath.Pk);
                 containerProperties.IndexingPolicy.DefaultDamSetup(false);
                 containerProperties.IndexingPolicy.ClearIndexingPaths();
 

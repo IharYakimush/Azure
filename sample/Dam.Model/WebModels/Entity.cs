@@ -13,7 +13,7 @@ namespace Dam.Model.WebModels
     public class EntityRead : EntityCreate
     {
         [JsonPropertyName(PropertyName.Id)]
-        public string? Id { get; set; } 
+        public string? Id { get; set; }        
 
         [JsonPropertyName(PropertyName.CreatedOn)]
         public DateTime CreatedOn { get; set; }

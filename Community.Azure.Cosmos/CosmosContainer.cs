@@ -52,6 +52,8 @@ namespace Community.Azure.Cosmos
             container = new Lazy<Container>(containerFactory, LazyThreadSafetyMode.ExecutionAndPublication);
         }
 
-        public Container Value => container.Value;        
+        public Container Value => container.Value;
+
+        public CosmosSerializer Serializer => this.Value.Database.Client.ClientOptions.Serializer;
     }
 }

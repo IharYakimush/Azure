@@ -54,7 +54,7 @@ namespace Dam.Model
         public bool Active { get; set; } = true;
 
         [JsonPropertyName(PropertyName.CreatedOn)]
-        public DateTime CreatedOn { get; }
+        public DateTime CreatedOn { get; } = DateTime.UtcNow;
 
         [JsonPropertyName(PropertyName.Tags)]
         public ICollection<string> Tags => this.tags;
