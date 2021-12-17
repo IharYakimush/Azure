@@ -4,7 +4,10 @@ using Dam.Model.Configuration;
 using Dam.Model.CosmosDb;
 
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+
+using System;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -16,9 +19,21 @@ namespace Dam.FunctionsHttp
         {            
             builder.Services.AddAutoMapper(typeof(Entity));
 
-            builder.Services.AddConfig();
+            AddFunctionsConfig(builder);
 
             builder.Services.AddCosmosDb();
+        }
+
+        public static void AddFunctionsConfig(IFunctionsHostBuilder builder)
+        {
+            builder.Services.AddSingleton<IConfiguration>(sp =>
+            {
+                FunctionsHostBuilderContext context = builder.GetContext();
+
+                ConfigurationBuilder cb = new ConfigurationBuilder().AddDamHostConfig(context.ApplicationRootPath, Array.Empty<string>(), context.Configuration).AddDamAppConfig();
+
+                return cb.Build();
+            });
         }
     }
 }

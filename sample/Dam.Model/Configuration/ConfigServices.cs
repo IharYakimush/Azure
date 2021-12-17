@@ -9,20 +9,23 @@ namespace Dam.Model.Configuration
 {
     public static class ConfigServices
     {
-        public static ConfigurationBuilder AddDamHostConfig(this ConfigurationBuilder builder, string[] args)
+        public static ConfigurationBuilder AddDamHostConfig(this ConfigurationBuilder builder, string appRootPath, string[] args, IConfiguration? configuration)
         {
             var dir = Directory.GetCurrentDirectory();
 
             builder
-                .AddJsonFile(Path.Combine(dir,"globalconfig.json"), false)
-                .AddJsonFile(Path.Combine(dir, "host.json"), true)
+                .AddJsonFile(Path.Combine(appRootPath, "globalconfig.json"), false)
+                .AddJsonFile(Path.Combine(appRootPath, "appconfig.json"), true)
+                .AddEnvironmentVariables("DAM_");
+
+            if (configuration != null)
+            {
+                builder.AddConfiguration(configuration);
+            }
+
+            builder.AddCommandLine(args);
 #if DEBUG
-                .AddJsonFile(Path.Combine(dir, "local.settings.json"), true)                
-#endif  
-                .AddEnvironmentVariables("DAM_")
-                .AddCommandLine(args);
-#if DEBUG
-            Dictionary<string, string> debugConf = new Dictionary<string, string>() 
+            Dictionary<string, string> debugConf = new Dictionary<string, string>()
             {
                 { "ConnectionStrings:AppConfig", "https://appconfig25245.azconfig.io"},
             };
@@ -43,19 +46,7 @@ namespace Dam.Model.Configuration
                     .Connect(new Uri(connection), credential));
 
             return builder;
-        }
-
-        public static IServiceCollection AddConfig(this IServiceCollection services)
-        {
-            services.AddSingleton<IConfiguration>(sp =>
-            {
-                ConfigurationBuilder builder = new ConfigurationBuilder().AddDamHostConfig(Array.Empty<string>()).AddDamAppConfig();
-
-                return builder.Build();
-            });
-
-            return services;
-        }
+        }        
 
         public static IServiceCollection AddAzureIdentity(this IServiceCollection services)
         {
