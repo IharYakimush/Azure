@@ -22,9 +22,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CosmosDb", "CosmosDb", "{F3
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SampleDam", "SampleDam", "{EA64E229-CE28-41E1-B69E-517BF9CB114B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dam.Model", "sample\Dam.Model\Dam.Model.csproj", "{60554C7C-E18D-4967-A0D7-2807E08A2095}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dam.Model", "sample\Dam.Model\Dam.Model.csproj", "{60554C7C-E18D-4967-A0D7-2807E08A2095}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dam.FunctionsHttp", "sample\Dam.FunctionsHttp\Dam.FunctionsHttp.csproj", "{5782117B-B6A8-41F8-B37E-38BE8244EEFF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dam.FunctionsHttp", "sample\Dam.FunctionsHttp\Dam.FunctionsHttp.csproj", "{5782117B-B6A8-41F8-B37E-38BE8244EEFF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
