@@ -35,7 +35,7 @@ namespace Dam.FunctionsHttp
 
         [FunctionName("CreateTenant")]
         public async Task<IActionResult> CreateTenant(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "tenants")] HttpRequest http,
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "tenants")] HttpRequest http,
             ILogger log, CancellationToken cancellationToken)
         {            
             TenantCreate req = await JsonSerializer.DeserializeAsync<TenantCreate>(http.Body, ObjectResponseBody<TenantRead>.SerializerOptions, cancellationToken);
@@ -73,7 +73,7 @@ namespace Dam.FunctionsHttp
 
         [FunctionName("GetTenants")]
         public async Task<IActionResult> GetTenants(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "tenants")] HttpRequest http,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "tenants")] HttpRequest http,
             ILogger log, CancellationToken cancellationToken)
         {
             IOrderedQueryable<TenantRead> query = this.tenantsIndexedContainer.Value.GetItemLinqQueryable<TenantRead>(linqSerializerOptions: linqSerializerOptions).OrderByDescending(t => t.CreatedOn);
