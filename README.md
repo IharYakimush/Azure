@@ -2,7 +2,8 @@
 Adds dependency injection capabilities for Cosmos database and containers. Add serializer utilized System.Text.Json
 ## Register
 ```
-services.AddCosmosClient(sp => new CosmosClientBuilder(sp.GetRequiredService<IConfiguration>().GetConnectionString("CosmosDb"))            
+services.AddCosmosClient(sp => new CosmosClientBuilder(
+    sp.GetRequiredService<IConfiguration>().GetConnectionString("CosmosDb"))            
             .WithCustomSerializer(
                 new CosmosSystemTextJsonSerializer(
                     new System.Text.Json.JsonSerializerOptions() 
@@ -23,8 +24,8 @@ IServiceProvider sp;
 Lazy<CosmosClient> client = sp.GetRequiredService<CosmosClientFactory>().GetCosmosClientLazy(clientId);
 
 // Get Database
-CosmosDatabase<Db4> db = Sp.GetRequiredService<CosmosDatabase<Db4>>();
+CosmosDatabase<Db4> db = sp.GetRequiredService<CosmosDatabase<Db4>>();
 
 // Get Container
-CosmosContainer<Cnt2> db = Sp.GetRequiredService<CosmosContainer<Cnt2>>();
+CosmosContainer<Cnt2> db = sp.GetRequiredService<CosmosContainer<Cnt2>>();
 ```
