@@ -1,6 +1,7 @@
 ﻿
 namespace Community.Azure.Cosmos
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.IO;
     using System.Text.Json;
 
@@ -21,6 +22,7 @@ namespace Community.Azure.Cosmos
             this.systemTextJsonSerializer = new JsonObjectSerializer(jsonSerializerOptions);
         }
 
+        [return: MaybeNull]
         public override T FromStream<T>(Stream stream)
         {
             using (stream)
@@ -35,7 +37,7 @@ namespace Community.Azure.Cosmos
                     return (T)(object)stream;
                 }
 
-                return (T)this.systemTextJsonSerializer.Deserialize(stream, typeof(T), CancellationToken.None);
+                return (T?)this.systemTextJsonSerializer.Deserialize(stream, typeof(T), CancellationToken.None);
             }
         }
 
